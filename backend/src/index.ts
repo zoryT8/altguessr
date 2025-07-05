@@ -3,10 +3,9 @@ import helmet from "helmet";
 import morgan from "morgan";
 import cors from "cors";
 import dotenv from "dotenv";
-import mapRoutes from "./routes/mapRoutes.ts";
 
-// import productRoutes from "./routes/productRoutes.ts";
-// import { sql } from "./config/db.ts";
+import mapRoutes from "./routes/mapRoutes.ts";
+import { sql } from "./config/db.ts";
 // import { aj } from "./lib/arcjet.ts";
 
 dotenv.config();
@@ -51,32 +50,49 @@ app.use(morgan("dev")); // log the requests
 //     }
 // });
 
-app.use("/api/maps", mapRoutes);
+app.use("/api", mapRoutes);
 
-// async function initDB() {
-//     try {
-//         await sql`
-//             CREATE TABLE IF NOT EXISTS products (
-//                 id SERIAL PRIMARY KEY,
-//                 name VARCHAR(255) NOT NULL,
-//                 image VARCHAR(255) NOT NULL,
-//                 price DECIMAL(10, 2) NOT NULL,
-//                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-//             )
-//         `;
+async function initDB() {
+    try {
+        await sql`
+            CREATE TABLE IF NOT EXISTS maps (
+                id SERIAL PRIMARY KEY,
+                map_name VARCHAR(255) NOT NULL,
+                description VARCHAR(255),
+                total_plays INT DEFAULT 0 NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+        `;
 
-//         console.log("Database initialized successfully");
-//     } catch (error) {
-//         console.log("Error initDB", error);
-//     }
-// }
+        await sql`
+            CREATE TABLE IF NOT EXISTS locations (
+                image_id VARCHAR(255) PRIMARY KEY
+            );
+        `;
 
-// initDB().then(() => {
-//     app.listen(PORT, () => {
-//         console.log("Server is running on port " + PORT);
-//     });
-// });
+        // junction table for many-to-many relationship
+        await sql`
+            CREATE TABLE IF NOT EXISTS map_locations (
+                map_id INT,
+                location_id VARCHAR(255),
+                PRIMARY KEY (map_id, location_id),
+                FOREIGN KEY (map_id) REFERENCES maps(id) ON DELETE CASCADE,
+                FOREIGN KEY (location_id) REFERENCES locations(image_id) ON DELETE CASCADE
+            );
+        `;
 
-app.listen(PORT, () => {
-    console.log("Server is running on port " + PORT);
+        console.log("Database initialized successfully");
+    } catch (error) {
+        console.log("Error initDB", error);
+    }
+}
+
+initDB().then(() => {
+    app.listen(PORT, () => {
+        console.log("Server is running on port " + PORT);
+    });
 });
+
+// app.listen(PORT, () => {
+//     console.log("Server is running on port " + PORT);
+// });
