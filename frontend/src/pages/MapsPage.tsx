@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { PackageIcon, PlusCircleIcon, RefreshCwIcon } from "lucide-react";
+import { PlusCircleIcon, RefreshCwIcon, ShieldAlert } from "lucide-react";
 import axios from "axios";
 import { BASE_URL } from "../App";
 import MapCard from "../components/MapCard";
@@ -58,7 +58,7 @@ function MapsPage() {
         {mapsState.length === 0 && !loadingState && (
           <div className="flex flex-col justify-center items-center h-96 space-y-4">
             <div className="bg-base-100 rounded-full p-6">
-              <PackageIcon className="size-12" />
+              <ShieldAlert className="size-12" />
             </div>
             <div className="text-center space-y-2">
               <h3 className="text-2xl font-semibold ">No maps found</h3>

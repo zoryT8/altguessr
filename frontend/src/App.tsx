@@ -4,6 +4,7 @@ import HomePage from "./pages/HomePage";
 import PlayPage from "./pages/PlayPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import MapsPage from "./pages/MapsPage";
+import MapEditPage from "./pages/MapEditPage";
 
 export const BASE_URL =
   import.meta.env.MODE === "development" ? "http://localhost:3000" : "";
@@ -18,6 +19,7 @@ function App() {
         <Route path="/" element={<HomePage />}></Route>
         <Route path="/play/*" element={<PlayPage />}></Route>
         <Route path="/maps" element={<MapsPage />}></Route>
+        <Route path="/maps/edit/:id" element={<MapEditPage />}></Route>
         <Route path="*" element={<NotFoundPage />}></Route>
       </Routes>
 

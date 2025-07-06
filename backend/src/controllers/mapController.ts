@@ -90,8 +90,18 @@ const addLocationToMap = async (map_id: number, image_id: string) => {
     }
 };
 
-export const getMapLocations = async (map_id: string) => {
-    // TODO:
+const getMapLocations = async (mapId: string) => {
+    try {
+        const locations = await sql`
+            SELECT location_id FROM map_locations WHERE map_id=${mapId}
+        `;
+
+        console.log("fetched map locations", locations);
+        return locations;
+    } catch (error) {
+        console.log("Error in getMapLocations function", error);
+        return null;
+    }
 };
 
 export const getMapInfo = async (req: Request, res: Response) => {
@@ -102,21 +112,48 @@ export const getMapInfo = async (req: Request, res: Response) => {
         `;
 
         console.log("fetched map", map);
-        res.status(200).json({successStatus: true, data: map[0]});
+
+        const map_locations = await getMapLocations(mapId);
+
+        if (!map_locations) {
+            res.status(500).json({successStatus: false, message: "Internal Server Error"});
+        } else {
+            res.status(200).json({successStatus: true, data: map[0], locations: map_locations});
+        }
     } catch (error) {
         console.log("Error in getMap function", error);
         res.status(500).json({successStatus: false, message: "Internal Server Error"});
     }
 };
 
+const deleteMapLocationsNotInList = async (mapId: number, locationIds: string[]): Promise<boolean> => {
+    try {
+        const locationIdsString = locationIds.toString();
+        const deletedMap = await sql`
+            DELETE FROM map_locations WHERE map_id=${mapId} AND location_id NOT IN (${locationIdsString})
+        `;
+
+        if (deletedMap.length === 0) {
+            return false;
+        }
+
+        return true;
+    } catch (error) {
+        console.log("Error in deleteMap function", error);
+        return false;
+    }
+};
+
 export const updateMap = async (req: Request, res: Response) => {
     const {mapId} = req.params;
-    const {mapName, desc} = req.body;
+    const {mapName, desc, locationList} = req.body;
 
     try {
+        await deleteMapLocationsNotInList(Number(mapId), locationList);
+
         const updateMap = await sql`
             UPDATE maps
-            SET map_name=${name}, description=${desc}
+            SET map_name=${mapName}, description=${desc}
             WHERE id=${mapId}
             RETURNING *
         `;
@@ -124,6 +161,15 @@ export const updateMap = async (req: Request, res: Response) => {
         if (updateMap.length === 0) {
             res.status(404).json({successStatus: false, message: "Map not found"});
             return;
+        }
+
+        for (const locId of locationList) {
+            const loc = await getLocation(locId);
+            if (!loc) {
+                await addLocation(locId);
+            }
+
+            const junctionMapping = await addLocationToMap(Number(mapId), locId);
         }
 
         res.status(200).json({successStatus: true, data: updateMap[0]});

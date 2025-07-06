@@ -190,7 +190,11 @@ function AddMapModal({ fetchMaps }: ModalProps) {
               type="submit"
               className="btn btn-primary min-w-[120px] transition 
             duration-300 ease-in-out hover:-translate-y-1 hover:scale-110"
-              disabled={!formData.mapName || formData.locationList.includes("")} //|| loading}
+              disabled={
+                !formData.mapName ||
+                formData.locationList.includes("") ||
+                loadingState
+              }
             >
               <>
                 <PlusCircleIcon className="size-5" />
