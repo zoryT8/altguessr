@@ -9,6 +9,14 @@ import { useSelectedMapStore } from "../store/useSelectedMapStore";
 import leaflet from "leaflet";
 import RoundResultModal from "../components/RoundResultModal";
 import type { LngLatAlt } from "mapillary-js";
+import GameSummaryModal from "../components/GameSummaryModal";
+
+export class RoundResult {
+  score: number = 0;
+  guessLocation: leaflet.LatLng | null = null;
+  realLocation: LngLatAlt | null = null;
+  locationId: string = "";
+}
 
 interface PlayPageProps {
   numRounds: number;
@@ -129,7 +137,13 @@ function PlayPage({ numRounds }: PlayPageProps) {
             setRoundOverState={setRoundOverState}
             guessLocation={guessLocationState}
             realLocation={realLocationState}
+            numRounds={numRounds}
           ></RoundResultModal>
+          <GameSummaryModal
+            totalScore={scoreState}
+            roundResults={[]}
+            numRounds={numRounds}
+          ></GameSummaryModal>
           {mapLocations.current[roundNumberState - 1] && (
             <MapillaryStreetViewer
               accessToken={import.meta.env.VITE_MAPILLARY_ACCESS}

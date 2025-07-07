@@ -1,10 +1,8 @@
-import axios from "axios";
 import { PlusCircleIcon, MapPin, CircleX, ArrowBigRight } from "lucide-react";
 import { useEffect, useRef, useState, type FormEvent } from "react";
-import toast from "react-hot-toast";
-import { BASE_URL } from "../App";
 import leaflet from "leaflet";
 import { type LngLatAlt } from "mapillary-js";
+import { useNavigate } from "react-router-dom";
 
 interface ModalProps {
   scoreState: number;
@@ -15,6 +13,7 @@ interface ModalProps {
   setRoundOverState: React.Dispatch<React.SetStateAction<boolean>>;
   guessLocation: leaflet.LatLng | null;
   realLocation: LngLatAlt | null;
+  numRounds: number;
 }
 
 function RoundResultModal({
@@ -26,7 +25,12 @@ function RoundResultModal({
   setRoundOverState,
   guessLocation,
   realLocation,
+  numRounds,
 }: ModalProps) {
+  const navigate = useNavigate();
+  const [roundScore, setRoundScore] = useState<number>(0);
+  const [distance, setDistance] = useState<number>(0);
+  const mapSize = 2000;
   const mapRef = useRef<leaflet.Map | null>(null);
 
   const mapOptions: leaflet.MapOptions = {
@@ -65,6 +69,8 @@ function RoundResultModal({
     mapRef.current &&
       guessLocation &&
       new leaflet.Marker(guessLocation).addTo(mapRef.current);
+
+    calcDistanceScore();
   }, [guessLocation]);
 
   useEffect(() => {
@@ -79,6 +85,8 @@ function RoundResultModal({
       shadowSize: [41, 41],
     });
 
+    calcDistanceScore();
+
     mapRef.current &&
       realLocation &&
       new leaflet.Marker(realLocation, { icon: redIcon })
@@ -91,14 +99,39 @@ function RoundResultModal({
         );
   }, [realLocation]);
 
+  function calcDistanceScore() {
+    if (guessLocation && realLocation) {
+      let distanceCopy = Number(
+        (guessLocation.distanceTo(realLocation) / 1000).toFixed(1)
+      );
+      setDistance(distanceCopy);
+      setRoundScore(
+        Number((5000 * Math.E ** ((-1 * distanceCopy) / mapSize)).toFixed(0))
+      );
+    }
+  }
+
   function startNextRound(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     (
       document.getElementById("round_result_modal") as HTMLDialogElement
     ).close();
     setRoundNumberState(roundNumberState + 1);
-    // TODO: setScoreState(scoreState +);
+    setScoreState(scoreState + roundScore);
     setRoundOverState(false);
+    mapRef.current?.eachLayer((layer) => {
+      if (layer instanceof leaflet.Marker) {
+        layer.remove();
+      }
+    });
+  }
+
+  function endGame(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    (
+      document.getElementById("round_result_modal") as HTMLDialogElement
+    ).close();
+    (document.getElementById("game_summary_modal") as HTMLDialogElement).show();
   }
 
   return (
@@ -116,19 +149,32 @@ function RoundResultModal({
         </div>
         <div className="flex flex-col items-center">
           <h3 className="font-extrabold text-xl text-center mt-4 mb-4">
-            X points
+            {roundScore} points
           </h3>
           <progress
             className="progress progress-accent w-11/12"
-            value={1500}
+            value={roundScore}
             max="5000"
           ></progress>
           <p className="mt-4 font-bold">
             You were
-            <span className="text-secondary"> X </span>miles away from the
-            actual location.
+            <span className="text-secondary"> {distance} </span>kilometers away
+            from the&nbsp;
+            <a
+              href={`https://www.mapillary.com/app/?pKey=${locationId}&focus=photo`}
+              target="_blank"
+              className="transition duration-300 ease-in-out hover:text-secondary"
+            >
+              actual location
+            </a>
+            .
           </p>
-          <form className="space-y-6" onSubmit={startNextRound}>
+          <form
+            className="space-y-6"
+            onSubmit={(e) =>
+              roundNumberState == numRounds ? endGame(e) : startNextRound(e)
+            }
+          >
             {/* MODAL ACTIONS */}
             <div className="modal-action">
               <button

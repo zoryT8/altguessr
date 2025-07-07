@@ -66,6 +66,12 @@ function LeafletMap({ setGuessLocation }: LeafletMapProps) {
     e.preventDefault();
     if (pinRef.current) {
       setGuessLocation(pinRef.current.getLatLng());
+      mapRef.current?.eachLayer((layer) => {
+        if (layer instanceof leaflet.Marker) {
+          layer.remove();
+          pinRef.current = null;
+        }
+      });
     } else {
       setShowPlacePinAlert(true);
     }
