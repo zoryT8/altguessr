@@ -1,8 +1,13 @@
 import leaflet from "leaflet";
 import { useEffect, useRef, useState } from "react";
 import "@maptiler/leaflet-maptilersdk";
+import { MapPin } from "lucide-react";
 
-function LeafletMap() {
+interface LeafletMapProps {
+  setGuessLocation: (latlng: leaflet.LatLng) => void;
+}
+
+function LeafletMap({ setGuessLocation }: LeafletMapProps) {
   const [showPlacePinAlert, setShowPlacePinAlert] = useState<boolean>(false);
   const pinRef = useRef<leaflet.Marker | null>(null);
   const mapRef = useRef<leaflet.Map | null>(null);
@@ -58,8 +63,9 @@ function LeafletMap() {
   }
 
   function handleGuess(e: React.MouseEvent<HTMLElement>): void {
+    e.preventDefault();
     if (pinRef.current) {
-      // TODO: submit guess and go to new page with result of guess
+      setGuessLocation(pinRef.current.getLatLng());
     } else {
       setShowPlacePinAlert(true);
     }
@@ -87,13 +93,13 @@ function LeafletMap() {
           }}
         ></div>
         <button
-          className={`btn btn-soft absolute top-3 right-3 z-200 transition duration-300 ease-in-out ${
+          className={`btn btn-soft absolute top-3 right-3 z-200 font-bold transition duration-300 ease-in-out ${
             true ? "hover:-translate-y-1 hover:scale-110" : ""
           }`}
           disabled={false}
           onClick={handleGuess}
         >
-          Guess
+          <MapPin></MapPin>Guess
         </button>
         {showPlacePinAlert && (
           <div

@@ -104,6 +104,25 @@ const getMapLocations = async (mapId: string) => {
     }
 };
 
+export const getNumRandomLocations = async (req: Request, res: Response) => {
+    const {mapId, numLocations} = req.params;
+
+    try {
+        const map_locations = await sql`
+            SELECT location_id FROM map_locations WHERE map_id=${mapId} ORDER BY RANDOM() LIMIT ${numLocations}
+        `;
+
+        if (!map_locations) {
+            res.status(500).json({successStatus: false, message: "Internal Server Error"});
+        } else {
+            res.status(200).json({successStatus: true, locations: map_locations});
+        }
+    } catch (error) {
+        console.log("Error in getMap function", error);
+        res.status(500).json({successStatus: false, message: "Internal Server Error"});
+    }
+}
+
 export const getMapInfo = async (req: Request, res: Response) => {
     const {mapId} = req.params;
     try {

@@ -1,11 +1,37 @@
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { useSelectedMapStore } from "../store/useSelectedMapStore";
+import { BASE_URL } from "../App";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 function HomePage() {
-  const { selectedMapId, selectedMapName, setSelectedMap } =
-    useSelectedMapStore();
+  const { selectedMapId, selectedMapName } = useSelectedMapStore();
   const navigate = useNavigate();
+
+  const mapExists = async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/api/maps/${selectedMapId}`);
+      return Boolean(response.data.data);
+    } catch (err) {
+      return false;
+    }
+  };
+
+  async function startGame() {
+    const isValidMap = await mapExists();
+    if (isValidMap) {
+      navigate("/play");
+    } else {
+      toast.error("Map does not exist.", {
+        style: {
+          borderRadius: "6px",
+          background: "#333",
+          color: "#fff",
+        },
+      });
+    }
+  }
 
   return (
     <div className="min-h-screen max-h-screen overflow-auto">
@@ -22,7 +48,7 @@ function HomePage() {
             <button
               className="btn btn-primary w-2xl py-8 text-2xl font-bold transition 
             duration-300 ease-in-out hover:-translate-y-1 hover:scale-110"
-              onClick={() => navigate("/play")}
+              onClick={startGame}
             >
               SINGLEPLAYER
             </button>

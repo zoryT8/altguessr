@@ -298,7 +298,7 @@ function MapEditPage() {
                 <button
                   type="button"
                   onClick={handleDelete}
-                  className="btn btn-error transition 
+                  className="btn btn-secondary transition 
             duration-300 ease-in-out hover:-translate-y-1 hover:scale-110"
                 >
                   <Trash2Icon className="size-4 mr-2" />

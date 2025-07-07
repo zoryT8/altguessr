@@ -17,7 +17,7 @@ function App() {
     >
       <Routes>
         <Route path="/" element={<HomePage />}></Route>
-        <Route path="/play/*" element={<PlayPage />}></Route>
+        <Route path="/play/*" element={<PlayPage numRounds={5} />}></Route>
         <Route path="/maps" element={<MapsPage />}></Route>
         <Route path="/maps/edit/:id" element={<MapEditPage />}></Route>
         <Route path="*" element={<NotFoundPage />}></Route>
