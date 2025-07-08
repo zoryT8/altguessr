@@ -65,15 +65,18 @@ function RoundResultModal({
     };
   }, []);
 
-  useEffect(() => {
-    mapRef.current &&
-      guessLocation &&
-      new leaflet.Marker(guessLocation).addTo(mapRef.current);
+  //   useEffect(() => {
 
-    calcDistanceScore();
-  }, [guessLocation]);
+  //     calcDistanceScore();
+  //   }, [guessLocation]);
 
   useEffect(() => {
+    mapRef.current?.eachLayer((layer) => {
+      if (layer instanceof leaflet.Marker) {
+        layer.remove();
+      }
+    });
+
     const redIcon = new leaflet.Icon({
       iconUrl:
         "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png",
@@ -88,6 +91,10 @@ function RoundResultModal({
     calcDistanceScore();
 
     mapRef.current &&
+      guessLocation &&
+      new leaflet.Marker(guessLocation).addTo(mapRef.current);
+
+    mapRef.current &&
       realLocation &&
       new leaflet.Marker(realLocation, { icon: redIcon })
         .addTo(mapRef.current)
@@ -97,7 +104,7 @@ function RoundResultModal({
             "_blank"
           )
         );
-  }, [realLocation]);
+  }, [guessLocation, realLocation]);
 
   function calcDistanceScore() {
     if (guessLocation && realLocation) {
@@ -108,6 +115,10 @@ function RoundResultModal({
       setRoundScore(
         Number((5000 * Math.E ** ((-1 * distanceCopy) / mapSize)).toFixed(0))
       );
+      mapRef.current?.fitBounds([
+        [guessLocation.lat, guessLocation.lng],
+        [realLocation.lat, realLocation.lng],
+      ]);
     }
   }
 
@@ -119,11 +130,6 @@ function RoundResultModal({
     setRoundNumberState(roundNumberState + 1);
     setScoreState(scoreState + roundScore);
     setRoundOverState(false);
-    mapRef.current?.eachLayer((layer) => {
-      if (layer instanceof leaflet.Marker) {
-        layer.remove();
-      }
-    });
   }
 
   function endGame(e: FormEvent<HTMLFormElement>) {
@@ -182,7 +188,7 @@ function RoundResultModal({
                 className="btn btn-primary font-bold transition 
             duration-300 ease-in-out hover:-translate-y-1 hover:scale-110"
               >
-                Next Round
+                {roundNumberState == numRounds ? "Game Summary" : "Next Round"}
                 <ArrowBigRight className="size-5" />
               </button>
             </div>

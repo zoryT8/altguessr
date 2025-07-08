@@ -1,7 +1,6 @@
-import { PlusCircleIcon, MapPin, CircleX, ArrowBigRight } from "lucide-react";
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import { CircleCheck } from "lucide-react";
+import { useEffect, useRef } from "react";
 import leaflet from "leaflet";
-import { type LngLatAlt } from "mapillary-js";
 import { useNavigate } from "react-router-dom";
 import type { RoundResult } from "../pages/PlayPage";
 
@@ -62,27 +61,24 @@ function GameSummaryModal({ totalScore, roundResults, numRounds }: ModalProps) {
         </div>
         <div className="flex flex-col items-center">
           <h3 className="font-extrabold text-xl text-center mt-4 mb-4">
-            X points
+            You got<span className="text-accent"> {totalScore} </span>points
           </h3>
           <progress
             className="progress progress-accent w-11/12"
-            value={0}
+            value={totalScore}
             max={`${5000 * numRounds}`}
           ></progress>
           <p className="mt-4 font-bold">
-            You were
-            <span className="text-secondary"> X </span>kilometers away from
-            the&nbsp;
-            <a
-              href={`https://www.mapillary.com/app/?pKey=${0}&focus=photo`}
-              target="_blank"
-              className="transition duration-300 ease-in-out hover:text-secondary"
-            >
-              actual location
-            </a>
-            .
+            out of a possible{" "}
+            <span className="text-secondary">{5000 * numRounds}</span>.
           </p>
-          <form className="space-y-6" onSubmit={() => navigate("/")}>
+          <form
+            className="space-y-6"
+            onSubmit={(e) => {
+              e.preventDefault();
+              navigate("/");
+            }}
+          >
             {/* MODAL ACTIONS */}
             <div className="modal-action">
               <button
@@ -91,7 +87,7 @@ function GameSummaryModal({ totalScore, roundResults, numRounds }: ModalProps) {
             duration-300 ease-in-out hover:-translate-y-1 hover:scale-110"
               >
                 Finish
-                <ArrowBigRight className="size-5" />
+                <CircleCheck className="size-5" />
               </button>
             </div>
           </form>
