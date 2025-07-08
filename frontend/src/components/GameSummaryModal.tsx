@@ -8,9 +8,15 @@ interface ModalProps {
   totalScore: number;
   roundResults: RoundResult[];
   numRounds: number;
+  gameOver: boolean;
 }
 
-function GameSummaryModal({ totalScore, roundResults, numRounds }: ModalProps) {
+function GameSummaryModal({
+  totalScore,
+  roundResults,
+  numRounds,
+  gameOver,
+}: ModalProps) {
   const navigate = useNavigate();
   const mapRef = useRef<leaflet.Map | null>(null);
 
@@ -46,6 +52,47 @@ function GameSummaryModal({ totalScore, roundResults, numRounds }: ModalProps) {
     };
   }, []);
 
+  useEffect(() => {
+    const redIcon = new leaflet.Icon({
+      iconUrl:
+        "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png",
+      shadowUrl:
+        "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+      popupAnchor: [1, -34],
+      shadowSize: [41, 41],
+    });
+
+    console.log(mapRef.current);
+    console.log(roundResults);
+
+    if (mapRef.current) {
+      for (let i = 0; i < roundResults.length; i++) {
+        const roundResult = roundResults[i];
+        new leaflet.Marker(roundResult.guessLocation!)
+          .addTo(mapRef.current)
+          .bindTooltip(`Round ${i + 1} Guess`, {
+            permanent: false,
+            direction: "top",
+          });
+
+        new leaflet.Marker(roundResult.realLocation!, { icon: redIcon })
+          .addTo(mapRef.current)
+          .bindTooltip(`Round ${i + 1} Actual`, {
+            permanent: false,
+            direction: "top",
+          })
+          .on("click", () =>
+            window.open(
+              `https://www.mapillary.com/app/?pKey=${roundResult.locationId}&focus=photo`,
+              "_blank"
+            )
+          );
+      }
+    }
+  }, [gameOver]);
+
   return (
     <dialog id="game_summary_modal" className="modal z-1001">
       <div className="modal-box max-h-11/12 min-w-8/12 h-11/12 w-8/12">
@@ -61,7 +108,9 @@ function GameSummaryModal({ totalScore, roundResults, numRounds }: ModalProps) {
         </div>
         <div className="flex flex-col items-center">
           <h3 className="font-extrabold text-xl text-center mt-4 mb-4">
-            You got<span className="text-accent"> {totalScore} </span>points
+            You got<span className="text-accent"> {totalScore} </span>points out
+            of a possible{" "}
+            <span className="text-secondary"> {5000 * numRounds}</span>.
           </h3>
           <progress
             className="progress progress-accent w-11/12"
@@ -69,8 +118,7 @@ function GameSummaryModal({ totalScore, roundResults, numRounds }: ModalProps) {
             max={`${5000 * numRounds}`}
           ></progress>
           <p className="mt-4 font-bold">
-            out of a possible{" "}
-            <span className="text-secondary">{5000 * numRounds}</span>.
+            Click on any red marker to see the actual location on Mapillary.
           </p>
           <form
             className="space-y-6"

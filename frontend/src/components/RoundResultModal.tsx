@@ -3,6 +3,7 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import leaflet from "leaflet";
 import { type LngLatAlt } from "mapillary-js";
 import { useNavigate } from "react-router-dom";
+import { RoundResult } from "../pages/PlayPage";
 
 interface ModalProps {
   scoreState: number;
@@ -14,6 +15,9 @@ interface ModalProps {
   guessLocation: leaflet.LatLng | null;
   realLocation: LngLatAlt | null;
   numRounds: number;
+  roundResultsList: RoundResult[];
+  setRoundResultsList: React.Dispatch<React.SetStateAction<RoundResult[]>>;
+  setGameOver: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 function RoundResultModal({
@@ -26,6 +30,9 @@ function RoundResultModal({
   guessLocation,
   realLocation,
   numRounds,
+  roundResultsList,
+  setRoundResultsList,
+  setGameOver,
 }: ModalProps) {
   const navigate = useNavigate();
   const [roundScore, setRoundScore] = useState<number>(0);
@@ -127,6 +134,14 @@ function RoundResultModal({
     (
       document.getElementById("round_result_modal") as HTMLDialogElement
     ).close();
+
+    const roundResult = new RoundResult();
+    roundResult.score = roundScore;
+    roundResult.guessLocation = guessLocation;
+    roundResult.realLocation = realLocation;
+    roundResult.locationId = locationId;
+
+    setRoundResultsList((oldList) => [...oldList, roundResult]);
     setRoundNumberState(roundNumberState + 1);
     setScoreState(scoreState + roundScore);
     setRoundOverState(false);
@@ -134,6 +149,15 @@ function RoundResultModal({
 
   function endGame(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    setScoreState(scoreState + roundScore);
+
+    const roundResult = new RoundResult();
+    roundResult.score = roundScore;
+    roundResult.guessLocation = guessLocation;
+    roundResult.realLocation = realLocation;
+    roundResult.locationId = locationId;
+    setRoundResultsList((oldList) => [...oldList, roundResult]);
+    setGameOver(true);
     (
       document.getElementById("round_result_modal") as HTMLDialogElement
     ).close();

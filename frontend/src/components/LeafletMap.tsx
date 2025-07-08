@@ -72,6 +72,7 @@ function LeafletMap({ setGuessLocation }: LeafletMapProps) {
           pinRef.current = null;
         }
       });
+      mapRef.current?.setView([0, 0], 1);
     } else {
       setShowPlacePinAlert(true);
     }

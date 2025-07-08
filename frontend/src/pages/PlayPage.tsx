@@ -23,6 +23,7 @@ interface PlayPageProps {
 }
 
 function PlayPage({ numRounds }: PlayPageProps) {
+  const [roundResults, setRoundResults] = useState<RoundResult[]>([]);
   const { selectedMapId, selectedMapName, setSelectedMap } =
     useSelectedMapStore();
   const navigate = useNavigate();
@@ -38,6 +39,7 @@ function PlayPage({ numRounds }: PlayPageProps) {
   const [loadingState, setLoadingState] = useState<boolean>(true);
   const [errorState, setErrorState] = useState<boolean>(false);
   const [roundOverState, setRoundOverState] = useState<boolean>(false);
+  const [gameOverState, setGameOverState] = useState<boolean>(false);
 
   function setGuessLocation(latlng: leaflet.LatLng) {
     if (roundOverState == false) {
@@ -138,11 +140,15 @@ function PlayPage({ numRounds }: PlayPageProps) {
             guessLocation={guessLocationState}
             realLocation={realLocationState}
             numRounds={numRounds}
+            roundResultsList={roundResults}
+            setRoundResultsList={setRoundResults}
+            setGameOver={setGameOverState}
           ></RoundResultModal>
           <GameSummaryModal
             totalScore={scoreState}
-            roundResults={[]}
+            roundResults={roundResults}
             numRounds={numRounds}
+            gameOver={gameOverState}
           ></GameSummaryModal>
           {mapLocations.current[roundNumberState - 1] && (
             <MapillaryStreetViewer

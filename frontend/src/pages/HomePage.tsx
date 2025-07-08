@@ -18,9 +18,22 @@ function HomePage() {
     }
   };
 
+  const updateMapPlays = async () => {
+    try {
+      const map = await axios.get(`${BASE_URL}/api/maps/${selectedMapId}`);
+      const response = await axios.put(
+        `${BASE_URL}/api/maps/${selectedMapId}/playcount`,
+        { newPlays: map.data.data.total_plays + 1 }
+      );
+    } catch (error) {
+      console.log("Error in updateMapPlays function", error);
+    }
+  };
+
   async function startGame() {
     const isValidMap = await mapExists();
     if (isValidMap) {
+      updateMapPlays();
       navigate("/play");
     } else {
       toast.error("Map does not exist.", {

@@ -198,6 +198,31 @@ export const updateMap = async (req: Request, res: Response) => {
     }
 };
 
+export const updateMapPlays = async (req: Request, res: Response) => {
+    const {mapId} = req.params;
+    const {newPlays} = req.body;
+
+    try {
+
+        const updateMap = await sql`
+            UPDATE maps
+            SET total_plays=${newPlays}
+            WHERE id=${mapId}
+            RETURNING *
+        `;
+
+        if (updateMap.length === 0) {
+            res.status(404).json({successStatus: false, message: "Map not found"});
+            return;
+        }
+
+        res.status(200).json({successStatus: true, data: updateMap[0]});
+    } catch (error) {
+        console.log("Error in updateMapPlays function", error);
+        res.status(500).json({successStatus: false, message: "Internal Server Error"});
+    }
+};
+
 export const deleteMap = async (req: Request, res: Response) => {
     const {mapId} = req.params;
 
