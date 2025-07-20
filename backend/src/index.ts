@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 
 import mapRoutes from "./routes/mapRoutes.ts";
 import { sql } from "./config/db.ts";
+import authRoutes from "./routes/authRoutes.ts";
 // import { aj } from "./lib/arcjet.ts";
 
 dotenv.config();
@@ -51,16 +52,26 @@ app.use(morgan("dev")); // log the requests
 // });
 
 app.use("/api", mapRoutes);
+app.use("/auth", authRoutes);
 
 async function initDB() {
     try {
         await sql`
+            CREATE TABLE IF NOT EXISTS users (
+                username VARCHAR(255) PRIMARY KEY NOT NULL UNIQUE,
+                password VARCHAR(255) NOT NULL
+            );
+        `;
+
+        await sql`
             CREATE TABLE IF NOT EXISTS maps (
                 id SERIAL PRIMARY KEY,
                 map_name VARCHAR(255) NOT NULL,
+                map_creator VARCHAR(255) DEFAULT 'Guest',
                 description VARCHAR(255),
                 total_plays INT DEFAULT 0 NOT NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (map_creator) REFERENCES users(username) 
             );
         `;
 

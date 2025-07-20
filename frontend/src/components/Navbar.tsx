@@ -1,7 +1,9 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { MapPin, User } from "lucide-react";
+import { useUserStore } from "../store/useUserStore";
 
 function Navbar() {
+  const { username } = useUserStore();
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const isHomePage = pathname === "/";
@@ -30,10 +32,31 @@ function Navbar() {
 
           {/* RIGHT SECTION */}
           <div className="flex items-center gap-2">
-            <div className="font-bold">Guest</div>
+            <div className="font-bold">{username}</div>
             <div className="indicator">
-              <div className="p-2 rounded-full hover:bg-base-200 transition-colors">
-                <User className="size-5" />
+              <div className="dropdown dropdown-hover dropdown-end p-2 rounded-full hover:bg-base-200 transition-colors">
+                <User tabIndex={0} role="button" className="size-5" />
+                <ul
+                  tabIndex={0}
+                  className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm"
+                >
+                  <li>
+                    <button
+                      className="font-bold cursor-pointer"
+                      onClick={() => navigate("/login")}
+                    >
+                      Login
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      className="font-bold cursor-pointer"
+                      onClick={() => navigate("/register")}
+                    >
+                      Register
+                    </button>
+                  </li>
+                </ul>
               </div>
             </div>
           </div>
