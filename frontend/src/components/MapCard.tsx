@@ -10,6 +10,7 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import { useSelectedMapStore } from "../store/useSelectedMapStore";
 import toast from "react-hot-toast";
+import { useUserStore } from "../store/useUserStore";
 
 interface MapCardProps {
   map: Record<string, any>;
@@ -17,6 +18,7 @@ interface MapCardProps {
 }
 
 function MapCard({ map, deleteMap }: MapCardProps) {
+  const { username } = useUserStore();
   const { setSelectedMap } = useSelectedMapStore();
   const navigate = useNavigate();
 
@@ -36,21 +38,26 @@ function MapCard({ map, deleteMap }: MapCardProps) {
             <Gamepad2 className="size-5 ml-1.5 text-accent"></Gamepad2>
           </div>
         </div>
-        <p className="text-lg font-semibold break-words whitespace-normal line-clamp-3">
-          {map.description}
+        <p className="text-lg break-words whitespace-normal line-clamp-3">
+          Creator:{" "}
+          <span className="font-bold">
+            {map.map_creator ? map.map_creator : "Guest"}
+          </span>
         </p>
 
         {/* CARD ACTIONS */}
         <div className="flex justify-between">
           <div className="card-actions justify-start mt-4">
-            <button
-              className="btn btn-primary px-4 font-bold transition 
+            {username === map.map_creator && (
+              <button
+                className="btn btn-primary px-4 font-bold transition 
             duration-300 ease-in-out hover:-translate-y-1 hover:scale-110"
-              onClick={() => navigate(`/maps/edit/${map.id}`)}
-            >
-              <Pencil className="size-4" />
-              <p className="text-white">Edit</p>
-            </button>
+                onClick={() => navigate(`/maps/edit/${map.id}`)}
+              >
+                <Pencil className="size-4" />
+                <p className="text-white">Edit</p>
+              </button>
+            )}
           </div>
           <div className="card-actions justify-end mt-4">
             <button

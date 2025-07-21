@@ -7,7 +7,7 @@ interface SelectedMapStore {
 }
 
 export const useSelectedMapStore = create<SelectedMapStore>((set, get) => ({
-    selectedMapId: 0,
-    selectedMapName: "World",
+    selectedMapId: 2,
+    selectedMapName: "Demo",
     setSelectedMap: (id, name) => set({selectedMapId: id, selectedMapName: name})
 }));

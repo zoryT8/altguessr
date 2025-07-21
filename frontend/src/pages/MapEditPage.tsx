@@ -13,6 +13,7 @@ import axios from "axios";
 import { BASE_URL } from "../App";
 import Navbar from "../components/Navbar";
 import toast from "react-hot-toast";
+import { useUserStore } from "../store/useUserStore";
 
 interface FormData {
   mapName: string;
@@ -29,6 +30,7 @@ function MapEditPage() {
     numLocations: 0,
   });
 
+  const { username } = useUserStore();
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -43,12 +45,16 @@ function MapEditPage() {
       const locations: string[] = response.data.locations.map(
         (locObj: Record<string, any>) => locObj.location_id
       );
-      setFormData({
-        mapName: mapInfo.map_name || "",
-        desc: mapInfo.description || "",
-        locationList: locations || [],
-        numLocations: locations.length || 0,
-      });
+      if (mapInfo.map_creator === username) {
+        setFormData({
+          mapName: mapInfo.map_name || "",
+          desc: mapInfo.description || "",
+          locationList: locations || [],
+          numLocations: locations.length || 0,
+        });
+      } else {
+        setErrorState("Incorrect user");
+      }
     } catch (err) {
       setErrorState("Something went wrong");
     } finally {
@@ -117,6 +123,11 @@ function MapEditPage() {
     }
   };
 
+  const handleUpdate = async () => {
+    await updateMap();
+    navigate("/maps");
+  };
+
   if (loadingState) {
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -132,9 +143,7 @@ function MapEditPage() {
           <ShieldAlert className="size-12" />
         </div>
         <div className="text-center space-y-2">
-          <h3 className="text-2xl font-semibold ">
-            No matching map was found.
-          </h3>
+          <h3 className="text-2xl font-semibold ">Something went wrong.</h3>
         </div>
       </div>
     );
@@ -169,8 +178,7 @@ function MapEditPage() {
             <form
               onSubmit={(e) => {
                 e.preventDefault();
-                updateMap();
-                navigate("/maps");
+                handleUpdate();
               }}
               className="space-y-6"
             >

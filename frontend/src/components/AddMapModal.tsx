@@ -3,11 +3,13 @@ import { PlusCircleIcon, MapPin, CircleX } from "lucide-react";
 import { useState, type FormEvent } from "react";
 import toast from "react-hot-toast";
 import { BASE_URL } from "../App";
+import { useUserStore } from "../store/useUserStore";
 
 interface FormData {
   mapName: string;
   desc: string;
   locationList: string[];
+  mapCreator: string;
 }
 
 interface ModalProps {
@@ -15,10 +17,12 @@ interface ModalProps {
 }
 
 function AddMapModal({ fetchMaps }: ModalProps) {
+  const { username } = useUserStore();
   const [formData, setFormData] = useState<FormData>({
     mapName: "",
     desc: "",
     locationList: [""],
+    mapCreator: username,
   });
 
   const [loadingState, setLoadingState] = useState<boolean>(false);
@@ -30,7 +34,12 @@ function AddMapModal({ fetchMaps }: ModalProps) {
     try {
       await axios.post(`${BASE_URL}/api/maps`, formData);
       await fetchMaps();
-      setFormData({ mapName: "", desc: "", locationList: [""] });
+      setFormData({
+        mapName: "",
+        desc: "",
+        locationList: [""],
+        mapCreator: username,
+      });
       toast.success("Map created successfully", {
         style: {
           borderRadius: "6px",

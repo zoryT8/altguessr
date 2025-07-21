@@ -67,7 +67,7 @@ async function initDB() {
             CREATE TABLE IF NOT EXISTS maps (
                 id SERIAL PRIMARY KEY,
                 map_name VARCHAR(255) NOT NULL,
-                map_creator VARCHAR(255) DEFAULT 'Guest',
+                map_creator VARCHAR(255) DEFAULT NULL,
                 description VARCHAR(255),
                 total_plays INT DEFAULT 0 NOT NULL,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

@@ -31,7 +31,9 @@ export const register = async (req: Request, res: Response) => {
             RETURNING *
         `;
 
-        res.status(201).json({successStatus: true, message: "User registered successfully"});
+        const token = jwt.sign({username: username}, process.env.JWT_SECRET!, {expiresIn: "1h"});
+
+        res.status(201).json({successStatus: true, message: "User registered successfully", token});
     } catch (error) {
         res.status(500).json({successStatus: false, message: "Error registering user"});
     }
@@ -50,8 +52,8 @@ export const login = async (req: Request, res: Response) => {
             return;
         }
 
-        const token = jwt.sign({username: user[0].username}, process.env.JWT_SECRET as string, {expiresIn: "1h"});
-        res.json({token});
+        const token = jwt.sign({username: user[0].username}, process.env.JWT_SECRET!, {expiresIn: "1h"});
+        res.status(201).json({token});
     } catch (error) {
         res.status(500).json({successStatus: false, message: "Login failed"});
     }

@@ -19,7 +19,7 @@ export const getMaps = async (req: Request, res: Response) => {
 };
 
 export const createMap = async (req: Request, res: Response) => {
-    const {mapName, desc, locationList} = req.body;
+    const {mapName, desc, locationList, mapCreator} = req.body;
 
     if (!mapName || !locationList) {
         res.status(400).json({successStatus: false, message: "All fields are required"});
@@ -27,11 +27,21 @@ export const createMap = async (req: Request, res: Response) => {
     }
 
     try {
-        const newMap = await sql`
-            INSERT INTO maps (map_name, description)
-            VALUES (${mapName}, ${desc})
-            RETURNING *
-        `;
+        let newMap;
+        if (mapCreator.trim().toLowerCase() === "guest") {
+            newMap = await sql`
+                INSERT INTO maps (map_name, description)
+                VALUES (${mapName}, ${desc})
+                RETURNING *
+            `;
+        } else {
+            newMap = await sql`
+                INSERT INTO maps (map_name, map_creator, description)
+                VALUES (${mapName}, ${mapCreator}, ${desc})
+                RETURNING *
+            `;
+        }
+        
 
         const mapId: number = newMap[0].id;
 

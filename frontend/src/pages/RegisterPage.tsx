@@ -20,7 +20,7 @@ interface FormData {
   password: string;
 }
 
-function LoginPage() {
+function RegisterPage() {
   const { setUsername } = useUserStore();
   const [formData, setFormData] = useState<FormData>({
     username: "",
@@ -32,11 +32,11 @@ function LoginPage() {
   const [loadingState, setLoadingState] = useState<boolean>(false);
   const [errorState, setErrorState] = useState<string>();
 
-  const login = async () => {
+  const register = async () => {
     setLoadingState(true);
     try {
-      const response = await axios.post(`${BASE_URL}/auth/login`, formData);
-      toast.success("Login successful", {
+      const response = await axios.post(`${BASE_URL}/auth/register`, formData);
+      toast.success("Register and login successful", {
         style: {
           borderRadius: "6px",
           background: "#333",
@@ -48,14 +48,14 @@ function LoginPage() {
       axios.defaults.headers.common["Authorization"] = response.data.token;
       navigate("/");
     } catch (error) {
-      toast.error("Username or password was incorrect", {
+      toast.error("Username already taken", {
         style: {
           borderRadius: "6px",
           background: "#333",
           color: "#fff",
         },
       });
-      console.log("Error in login function", error);
+      console.log("Error in register function", error);
     } finally {
       setLoadingState(false);
     }
@@ -91,13 +91,13 @@ function LoginPage() {
           <div className="card-body">
             <div className="flex justify-center">
               <h2 className="card-title text-2xl mb-6 font-extrabold text-accent">
-                Login
+                Register
               </h2>
             </div>
             <form
               onSubmit={(e) => {
                 e.preventDefault();
-                login();
+                register();
               }}
               className="space-y-6"
             >
@@ -136,19 +136,6 @@ function LoginPage() {
 
               {/* FORM ACTIONS */}
               <div className="flex flex-col gap-6 justify-center mt-6">
-                <div className="text-center font-semibold">
-                  Don't have an account?{" "}
-                  <button
-                    className="font-bold text-accent transition
-            duration-300 ease-in-out hover:text-primary cursor-pointer"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      navigate("/register");
-                    }}
-                  >
-                    Register
-                  </button>
-                </div>
                 <button
                   type="submit"
                   className="btn btn-primary transition w-full
@@ -163,7 +150,7 @@ function LoginPage() {
                   {loadingState ? (
                     <span className="loading loading-spinner loading-sm" />
                   ) : (
-                    <div>Login</div>
+                    <div>Register</div>
                   )}
                 </button>
               </div>
@@ -174,4 +161,4 @@ function LoginPage() {
     </div>
   );
 }
-export default LoginPage;
+export default RegisterPage;
