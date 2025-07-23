@@ -7,10 +7,12 @@ import dotenv from "dotenv";
 import mapRoutes from "./routes/mapRoutes.ts";
 import { sql } from "./config/db.ts";
 import authRoutes from "./routes/authRoutes.ts";
+import path from "path";
 // import { aj } from "./lib/arcjet.ts";
 
 dotenv.config();
 
+const __dirname = path.resolve();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -53,6 +55,13 @@ app.use(morgan("dev")); // log the requests
 
 app.use("/api", mapRoutes);
 app.use("/auth", authRoutes);
+
+if (process.env.NODE_ENV === "production") {
+    app.use(express.static(path.join(__dirname, "../frontend/dist")));
+    app.get("*", (req, res) => {
+        res.sendFile(path.resolve(__dirname, "../frontend/dist/index.html"))
+    })
+}
 
 async function initDB() {
     try {

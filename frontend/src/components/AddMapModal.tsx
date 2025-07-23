@@ -129,7 +129,7 @@ function AddMapModal({ fetchMaps }: ModalProps) {
               </label>
               <div className="relative max-h-36 overflow-y-auto">
                 <ul className="flex flex-col list bg-base-100 rounded-box shadow-md">
-                  {formData.locationList.map((loc, index) => (
+                  {formData.locationList.map((index) => (
                     <li className="list-row items-center py-1">
                       <div className="text-lg font-bold">{index + 1}</div>
                       <input
