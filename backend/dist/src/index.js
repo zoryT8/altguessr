@@ -14,31 +14,31 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(cors());
-app.use(
-  helmet({
-    contentSecurityPolicy: {
-      directives: {
-        defaultSrc: ["'self'"],
-        scriptSrc: [
-          "'self'",
-          "https://unpkg.com",       // allow leaflet from CDN
-          "'unsafe-inline'",        // if you need inline scripts (optional, safer to avoid)
-          "'unsafe-eval'",
-          "blob:",                  // allow blob URLs for workers
-        ],
-        connectSrc: [
-          "'self'",
-          "https://api.maptiler.com",
-          "https://graph.mapillary.com"  // allow fetch/XHR/websocket to Mapillary API
-        ],
-        workerSrc: ["'self'", "blob:"], // explicitly allow workers from blob URLs
-        styleSrc: ["'self'", "'unsafe-inline'", "https://unpkg.com"], // if you load CSS from unpkg or inline
-        imgSrc: ["'self'", "data:", "https://api.maptiler.com", "https://graph.mapillary.com"], // adjust based on your app needs
-        // add other directives if needed (fontSrc, connectSrc, etc)
-      },
-    },
-  })
-); // helmet is a security middleware that helps you protect your app by setting various HTTP headers
+// app.use(
+//   helmet({
+//     contentSecurityPolicy: {
+//       directives: {
+//         defaultSrc: ["'self'"],
+//         scriptSrc: [
+//           "'self'",
+//           "https://unpkg.com",       // allow leaflet from CDN
+//           "'unsafe-inline'",        // if you need inline scripts (optional, safer to avoid)
+//           "'unsafe-eval'",
+//           "blob:",                  // allow blob URLs for workers
+//         ],
+//         connectSrc: [
+//           "'self'",
+//           "https://api.maptiler.com",
+//           "https://graph.mapillary.com"  // allow fetch/XHR/websocket to Mapillary API
+//         ],
+//         workerSrc: ["'self'", "blob:"], // explicitly allow workers from blob URLs
+//         styleSrc: ["'self'", "'unsafe-inline'", "https://unpkg.com"], // if you load CSS from unpkg or inline
+//         imgSrc: ["'self'", "data:", "https://api.maptiler.com", "https://graph.mapillary.com"], // adjust based on your app needs
+//         // add other directives if needed (fontSrc, connectSrc, etc)
+//       },
+//     },
+//   })
+// ); // helmet is a security middleware that helps you protect your app by setting various HTTP headers
 app.use(morgan("dev")); // log the requests
 // apply arcjet rate-limit to all routes
 // app.use(async (req, res, next) => {
