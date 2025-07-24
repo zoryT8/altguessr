@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { sql } from "../config/db.ts";
+import { sql } from "../config/db.js";
 export const authenticateJWT = async (req, res, next) => {
     const { mapId } = req.params;
     const token = req.headers['authorization']?.split(' ')[0];

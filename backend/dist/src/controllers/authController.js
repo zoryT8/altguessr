@@ -1,5 +1,5 @@
 import bcrypt from "bcryptjs";
-import { sql } from "../config/db.ts";
+import { sql } from "../config/db.js";
 import jwt from "jsonwebtoken";
 export const register = async (req, res) => {
     const { username, password } = req.body;

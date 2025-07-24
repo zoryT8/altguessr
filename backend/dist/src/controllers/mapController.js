@@ -1,4 +1,4 @@
-import { sql } from "../config/db.ts";
+import { sql } from "../config/db.js";
 // map and location CRUD operations
 export const getMaps = async (req, res) => {
     try {

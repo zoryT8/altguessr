@@ -1,6 +1,6 @@
 import express from "express";
-import { getMaps, createMap, getMapInfo, updateMap, deleteMap, getNumRandomLocations, updateMapPlays } from "../controllers/mapController.ts";
-import { authenticateJWT } from "../middleware/authenticateJWT.ts";
+import { getMaps, createMap, getMapInfo, updateMap, deleteMap, getNumRandomLocations, updateMapPlays } from "../controllers/mapController.js";
+import { authenticateJWT } from "../middleware/authenticateJWT.js";
 const router = express.Router();
 router.get("/maps", getMaps);
 router.get("/maps/:mapId", getMapInfo);
