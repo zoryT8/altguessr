@@ -23,6 +23,7 @@ app.use(
           "'self'",
           "https://unpkg.com",       // allow leaflet from CDN
           "'unsafe-inline'",        // if you need inline scripts (optional, safer to avoid)
+          "'unsafe-eval'",
           "blob:",                  // allow blob URLs for workers
         ],
         workerSrc: ["'self'", "blob:"], // explicitly allow workers from blob URLs
