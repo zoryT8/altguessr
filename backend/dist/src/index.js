@@ -26,9 +26,14 @@ app.use(
           "'unsafe-eval'",
           "blob:",                  // allow blob URLs for workers
         ],
+        connectSrc: [
+          "'self'",
+          "https://api.maptiler.com",
+          "https://graph.mapillary.com"  // allow fetch/XHR/websocket to Mapillary API
+        ],
         workerSrc: ["'self'", "blob:"], // explicitly allow workers from blob URLs
         styleSrc: ["'self'", "'unsafe-inline'", "https://unpkg.com"], // if you load CSS from unpkg or inline
-        imgSrc: ["'self'", "data:"], // adjust based on your app needs
+        imgSrc: ["'self'", "data:", "https://api.maptiler.com", "https://graph.mapillary.com"], // adjust based on your app needs
         // add other directives if needed (fontSrc, connectSrc, etc)
       },
     },
