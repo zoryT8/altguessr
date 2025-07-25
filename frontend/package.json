@@ -13,6 +13,7 @@
     "@maptiler/leaflet-maptilersdk": "^4.1.0",
     "@tailwindcss/vite": "^4.1.10",
     "axios": "^1.10.0",
+    "geoguessr-clone-pern": "file:..",
     "leaflet": "^1.9.4",
     "lucide-react": "^0.523.0",
     "mapillary-js": "^4.1.2",

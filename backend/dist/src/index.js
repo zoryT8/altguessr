@@ -7,6 +7,7 @@ import mapRoutes from "./routes/mapRoutes.js";
 import { sql } from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
 import path from "path";
+import Functions from "firebase-functions";
 // import { aj } from "./lib/arcjet.ts";
 dotenv.config();
 const __dirname = path.resolve();
@@ -101,3 +102,5 @@ initDB().then(() => {
 // app.listen(PORT, () => {
 //     console.log("Server is running on port " + PORT);
 // });
+
+exports.api = Functions.https.onRequest(app);

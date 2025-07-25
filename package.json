@@ -2,11 +2,12 @@
   "name": "geoguessr-clone-pern",
   "version": "1.0.0",
   "description": "��#\u0000 \u0000a\u0000l\u0000t\u0000g\u0000u\u0000e\u0000s\u0000s\u0000r\u0000\r\u0000 \u0000\r\u0000 \u0000g\u0000e\u0000o\u0000g\u0000u\u0000e\u0000s\u0000s\u0000r\u0000-\u0000c\u0000l\u0000o\u0000n\u0000e\u0000-\u0000p\u0000e\u0000r\u0000n\u0000-\u0000s\u0000t\u0000a\u0000c\u0000k\u0000\r\u0000 \u0000",
-  "main": "index.js",
+  "main": "backend/dist/src/index.js",
   "scripts": {
     "build": "npm install --legacy-peer-deps --prefix backend && npm install --legacy-peer-deps --prefix frontend && npm run build --prefix frontend",
     "start": "npm start --prefix backend",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "deploy": "firebase deploy --only functions:api"
   },
   "repository": {
     "type": "git",
@@ -18,5 +19,12 @@
   "bugs": {
     "url": "https://github.com/zoryT8/altguessr/issues"
   },
-  "homepage": "https://github.com/zoryT8/altguessr#readme"
+  "engines": {
+    "node": "22"
+  },
+  "homepage": "https://github.com/zoryT8/altguessr#readme",
+  "dependencies": {
+    "firebase-admin": "^13.4.0",
+    "firebase-functions": "^6.4.0"
+  }
 }
